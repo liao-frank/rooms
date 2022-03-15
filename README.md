@@ -2,13 +2,7 @@
 
 Rooms is a client library for synchronizing state among multiple clients without servers.
 
-Under the hood, Rooms uses WebRTC which is not technically a serverless technology. Rooms is called a "serverless" library because of:
-
-1. The nature of WebRTC, being generally serverless once P2P connections are established
-2. The existence of free, reputable TURN servers
-3. The plug-and-play nature of the library
-
-Rooms attempts to simplify the creation of multiplayer websites. Think in terms of chatrooms, online party games,
+Rooms attempts to simplify the creation of multiplayer websites. Think in terms of chatrooms, party games, collaborative whiteboarding, etc.
 
 ## Status
 
@@ -63,6 +57,14 @@ document
 ```
 
 ## FAQ
+
+> How is _Rooms_ serverless?
+
+Under the hood, Rooms uses WebRTC which is not technically a serverless technology. Rooms is called a "serverless" library because of:
+
+1. The nature of WebRTC, being generally serverless once P2P connections are established
+2. The existence of free, reputable TURN servers
+3. The plug-and-play nature of the library
 
 > How secure is Rooms i.e. tolerant to malicious parties?
 
