@@ -6,55 +6,7 @@ Rooms attempts to simplify the creation of multiplayer websites. Think in terms 
 
 ## Status
 
-In progress and unpublished.
-
-## Usage
-
-```ts
-import {Room} from 'rooms'
-
-const roomCode = 'some-random-code'
-
-// This is the initial state if the current client is the first to join.
-const initialState = {
-  count: 0,
-}
-
-// Setup the room.
-const room = new Room(roomCode, initialState)
-
-  // Register actions.
-  .register('increment', (prevState) => ({
-    ...prevState,
-    count: prevState.count + 1,
-  })
-  .register('decrement', (prevState) => ({
-    ...prevState,
-    count: prevState.count - 1,
-  })
-
-  // Listen for updates.
-  .on('state', (state) => {
-    console.log('State was updated: ', state)
-  })
-  .on('status', (status) => {
-    if (status !== 'connected') return
-    console.log('Successfully joined room!')
-  })
-
-  // Connect.
-  .connect()
-
-// Finally, whenever any connected client clicks these buttons, the state will
-// update for everyone.
-document
-  .querySelector('button#increment')
-  .addEventListener('click', () => room.emit('increment'))
-
-document
-  .querySelector('button#decrement')
-  .addEventListener('click', () => room.emit('decrement'))
-```
+Deprecated piece of shit. Working on use-rtc-state instead.
 
 ## FAQ
 
