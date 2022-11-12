@@ -16,8 +16,8 @@ Rooms attempts to simplify the creation of multiplayer websites. Think in terms 
 //    state.
 const { state, setState } = useRoom<number>('unique-id', 0)
 
-// 2. Call 'setState' to change the state across all clients that using the hook
-//    with the same ID.
+// 2. Call 'setState' to change the state across all clients that are calling
+//    the hook with the same ID.
 setState(42)
 
 // That's it! No servers needed. Whenever new clients call the hook, they will
