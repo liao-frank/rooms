@@ -1,0 +1,33 @@
+{
+  "name": "rooms",
+  "version": "0.1.0",
+  "repository": "https://github.com/liao-frank/rooms.git",
+  "license": "MIT",
+  "author": "Frank Liao <liaofranku@gmail.com>",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "source": "src/index.ts",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "react-demo": "parcel react-demo/index.html --dist-dir output"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^3.4.0",
+    "@types/assert": "^1.5.6",
+    "@types/react": "^18.0.24",
+    "@types/react-dom": "^18.0.8",
+    "@types/uuid": "^8.3.4",
+    "parcel": "^2.7.0",
+    "prettier": "^2.7.1",
+    "process": "^0.11.10",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "assert": "^2.0.0",
+    "eventemitter3": "^4.0.7",
+    "peerjs": "^1.4.7",
+    "react": "^18.2.0",
+    "uuid": "^9.0.0"
+  }
+}
