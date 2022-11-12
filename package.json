@@ -10,7 +10,7 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "build": "parcel build",
-    "react-demo": "parcel react-demo/index.html --dist-dir output"
+    "demo": "parcel demo/index.html --dist-dir output"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.4.0",
