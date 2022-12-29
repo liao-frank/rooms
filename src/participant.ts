@@ -1,9 +1,9 @@
 import Peer, { DataConnection, PeerConnectOption, PeerJSOption } from 'peerjs'
 import { v4 as uuidv4 } from 'uuid'
 
-import { connectToPeer } from '../lib/peerHelpers'
-import { Serializable } from '../types'
-import { Member, Status } from './member'
+import { connectToPeer } from './lib/peerHelpers'
+import { Serializable } from './types'
+import { Member, ConnectionStatus } from './member'
 
 // Participants are members that are always only connected to a single host
 // member.
@@ -34,7 +34,7 @@ export class Participant<
 
     this.hostConnection = connection
     connection.on('close', () => {
-      this.setStatus(Status.Disconnected)
+      this.setStatus(ConnectionStatus.Disconnected)
     })
 
     return peer

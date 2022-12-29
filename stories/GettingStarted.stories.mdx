@@ -1,0 +1,58 @@
+import { Meta } from '@storybook/addon-docs'
+
+import { SharedInput } from './examples/Input'
+
+<Meta
+  title="Basics/Getting started"
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+  }}
+/>
+
+# Getting started
+
+Basic usage of the `useRoom` hook is very similar to using `useState` in React.
+
+1. Within a functional component, call `useRoom` with an ID specific to that piece of state.
+
+```ts
+const { state, setState } = useRoom<number>('unique-id', /* Initial state: */ 0)
+```
+
+2. Call `setState` to change the state across all clients that are calling the hook with the same ID.
+
+```ts
+setState(42)
+```
+
+That's it! No servers needed. Whenever new clients call the hook, they will be automatically synced up with everyone else.
+
+<br />
+<br />
+<br />
+
+### Example: Shared input
+
+<br />
+
+<SharedInput />
+
+This example is one of the simplest ways to use the `useRoom` hook. Typing in the input box above will update it across all clients that are on this page.
+
+Sample code:
+
+```tsx
+const SharedInput = () => {
+  const { state: value, setState: setValue } = useRoom<string>('unique-id', '')
+
+  return (
+    <Input
+      onChange={(event) => void setValue(event.target.value)}
+      value={value}
+    />
+  )
+}
+```

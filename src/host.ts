@@ -1,7 +1,7 @@
 import Peer, { DataConnection, PeerJSOption } from 'peerjs'
 
-import { createPeer } from '../lib/peerHelpers'
-import { Serializable } from '../types'
+import { createPeer } from './lib/peerHelpers'
+import { Serializable } from './types'
 import { Member } from './member'
 
 export class Host<T extends Serializable = Serializable> extends Member<T> {

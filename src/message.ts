@@ -1,4 +1,4 @@
-import { Serializable } from '../types'
+import { Serializable } from './types'
 
 export enum MessageType {
   Broadcast = 'broadcast',

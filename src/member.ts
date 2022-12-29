@@ -2,7 +2,7 @@ import EventEmitter from 'eventemitter3'
 import Peer, { PeerConnectOption, PeerJSOption } from 'peerjs'
 import { v5 as uuidv5 } from 'uuid'
 
-import { Serializable } from '../types'
+import { Serializable } from './types'
 
 // This class is a wrapper for Peer within the context of a centralized
 // cluster.
@@ -11,17 +11,17 @@ export abstract class Member<
 > extends EventEmitter<NodeEvents<T>> {
   protected peerProtected?: Peer
   private didConnectPrivate = false
-  private statusPrivate: Status = Status.Uninitialized
+  private statusPrivate: ConnectionStatus = ConnectionStatus.Uninitialized
 
   async connect(
     roomId: string,
     peerOptions?: PeerJSOption,
     connectOptions?: PeerConnectOption
   ): Promise<void> {
-    if (this.status === Status.Disconnected) {
+    if (this.status === ConnectionStatus.Disconnected) {
       throw new Error('Members cannot reconnect.')
     }
-    this.setStatus(Status.Connecting)
+    this.setStatus(ConnectionStatus.Connecting)
 
     const hostId = Member.getHostId(roomId)
 
@@ -32,10 +32,10 @@ export abstract class Member<
         connectOptions
       )
       this.peerProtected = peer
-      this.setStatus(Status.Connected)
+      this.setStatus(ConnectionStatus.Connected)
       peer.on('disconnected', () => void this.tearDown())
     } catch (err) {
-      this.setStatus(Status.Disconnected)
+      this.setStatus(ConnectionStatus.Disconnected)
       this.tearDown()
       throw err
     }
@@ -47,7 +47,7 @@ export abstract class Member<
   ): Promise<Peer>
 
   broadcast(data: T): void {
-    if (this.status !== Status.Connected) return
+    if (this.status !== ConnectionStatus.Connected) return
     this.broadcastInternal(data)
   }
   protected abstract broadcastInternal(data: T): void
@@ -66,11 +66,11 @@ export abstract class Member<
     return this.peerProtected
   }
 
-  get status(): Status {
+  get status(): ConnectionStatus {
     return this.statusPrivate
   }
 
-  protected setStatus(status: Status): void {
+  protected setStatus(status: ConnectionStatus): void {
     const prevStatus = this.status
     const prevStatusIndex = STATUS_ORDER.indexOf(this.status)
     const statusIndex = STATUS_ORDER.indexOf(status)
@@ -85,7 +85,7 @@ export abstract class Member<
     }
 
     if (status === prevStatus) return
-    if (status === Status.Connected) {
+    if (status === ConnectionStatus.Connected) {
       this.didConnectPrivate = true
     }
     this.statusPrivate = status
@@ -95,7 +95,7 @@ export abstract class Member<
   tearDown() {
     if (this.peer) this.peer.destroy()
     this.peerProtected = undefined
-    this.setStatus(Status.Disconnected)
+    this.setStatus(ConnectionStatus.Disconnected)
   }
 
   private static getHostId(roomId: string) {
@@ -105,10 +105,10 @@ export abstract class Member<
 
 interface NodeEvents<T extends Serializable> {
   data: [T]
-  status: [Status]
+  status: [ConnectionStatus]
 }
 
-export enum Status {
+export enum ConnectionStatus {
   Uninitialized = 'uninitialized',
   Connecting = 'connecting',
   Connected = 'connected',
@@ -119,8 +119,8 @@ export enum Status {
 const HOST_ID_NAMESPACE = '0b5d37ef-71a8-4691-87f3-f380af4f27e0'
 
 const STATUS_ORDER = [
-  Status.Uninitialized,
-  Status.Connecting,
-  Status.Connected,
-  Status.Disconnected,
+  ConnectionStatus.Uninitialized,
+  ConnectionStatus.Connecting,
+  ConnectionStatus.Connected,
+  ConnectionStatus.Disconnected,
 ]

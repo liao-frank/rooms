@@ -2,19 +2,19 @@ import { PeerConnectOption, PeerJSOption } from 'peerjs'
 import { useCallback, useEffect, useState } from 'react'
 
 import { PeerErrorType } from '../lib/peerHelpers'
-import { Host } from '../member/host'
-import { Member, Status } from '../member/member'
-import { Participant } from '../member/participant'
+import { Host } from '../host'
+import { Member, ConnectionStatus } from '../member'
+import { Participant } from '../participant'
 import { Serializable } from '../types'
 
 export const useMember = <T extends Serializable>(
   roomId: string
 ): {
   member: Member<T>
-  status: Status
+  status: ConnectionStatus
   error?: Error
 } => {
-  const [status, setStatus] = useState<Status>(Status.Connecting)
+  const [status, setStatus] = useState<ConnectionStatus>(ConnectionStatus.Connecting)
   const [error, setError] = useState<Error>()
 
   const initialMember = didRecentlyStopHosting()
@@ -54,7 +54,7 @@ export const useMember = <T extends Serializable>(
     // If disconnected, retry and rotate between host and participant as
     // necessary.
     member.on('status', (status) => {
-      if (status !== Status.Disconnected) return
+      if (status !== ConnectionStatus.Disconnected) return
       // If never connected, let error catching handle retries.
       if (!member.didConnect) return
 
@@ -85,6 +85,7 @@ export const useMember = <T extends Serializable>(
   return { member, status, error }
 }
 
+// TODO: The localstorage key should take the room id into account.
 const didRecentlyStopHosting = (): boolean => {
   const timestampStr =
     localStorage.getItem(STOPPED_HOSTING_TIMESTAMP_KEY) || '0'

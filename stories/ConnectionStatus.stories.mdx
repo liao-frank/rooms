@@ -1,0 +1,39 @@
+import { Meta } from '@storybook/addon-docs'
+
+import { LoadingTip } from './examples/LoadingTip'
+
+<Meta
+  title="Basics/Connection status"
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+  }}
+/>
+
+# Connection status
+
+The `useRoom` hook also returns a `status` value, which describes the connection status of the room. The status can be one of three values: `connecting`, `connected`, and `disconnected`. This value can be used to implement loading screens or to otherwise tell users if they are connected to their room or not.
+
+### Example: Loading tip
+
+This example implements a loading screen with a fun fact that is displayed while connecting to the example room.
+
+<p>
+  <LoadingTip />
+</p>
+
+```tsx
+export const LoadingTip = () => {
+  const { status } = useRoom<null>(ROOM_ID, null)
+
+  return (
+    <div>
+      {status !== ConnectionStatus.Connected
+        ? 'Fun fact: Pangolins are the only known mammals covered with scales\nConnecting... ⏳'
+        : 'You are connected to room ' + ROOM_ID}
+    </div>
+  )
+}
+```

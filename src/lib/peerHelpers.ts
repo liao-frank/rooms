@@ -3,6 +3,8 @@
  */
 import Peer, { DataConnection, PeerConnectOption, PeerJSOption } from 'peerjs'
 
+import { setTimeoutAsync } from './asyncTimeout'
+
 /**
  * Connect to a peer with timeouts and retries with exponential backoff.
  * @param peer A peer, not necessarily finished connecting to the peer server.
@@ -10,92 +12,72 @@ import Peer, { DataConnection, PeerConnectOption, PeerJSOption } from 'peerjs'
  * @param options
  * @returns A promise for an open data connection.
  */
-export const connectToPeer = (
+export const connectToPeer = async (
   peer: Peer,
   otherPeerId: string,
   options?: PeerConnectOption,
   presetupConnection?: (connection: DataConnection) => void
 ): Promise<DataConnection> => {
-  if (peer.disconnected) {
-    throw new Error('Peer is disconnected and cannot connect to others.')
-  }
+  const attemptedConnections: DataConnection[] = []
+  let connected = false
+  let timeoutId: NodeJS.Timeout | undefined
+  let currentTry = 0
 
-  const connections: DataConnection[] = []
-  const timeoutSlotIds: number[] = []
-  const timeoutIntervals = new Array(CONNECT_RETRY_LIMIT)
-    .fill(null)
-    .map((_, index) => CONNECT_BASE_TIMEOUT_MS * Math.pow(2, index + 1) - 1_000)
-
-  const disposeConnections = (ignoreConnection?: DataConnection) => {
-    for (const connection of connections) {
-      if (connection !== ignoreConnection) {
-        destroyConnection(connection)
-      }
-    }
-    connections.splice(0, connections.length)
-    Object.freeze(connections)
-  }
-  const disposeTimeouts = () => {
-    for (const id of timeoutSlotIds) {
-      clearTimeout(id)
-    }
-    timeoutSlotIds.splice(0, timeoutSlotIds.length)
-    Object.freeze(timeoutSlotIds)
-  }
-
-  const connect = (resolve: (connection: DataConnection) => void): void => {
-    // NOTE: Fix for incorrect typing.
-    const connection = peer.connect(otherPeerId, options)
-
-    // Connection can potentially be undefined if a connection to the given peer
-    // already exists. This can happen when a previous connection has succeeded
-    // but hasn't emitted the 'open' event yet.
-    if (!connection) {
-      return
-    }
-
-    presetupConnection?.(connection)
-
-    connections.push(connection)
-    connection.once('open', () => {
-      disposeConnections(connection)
-      disposeTimeouts()
-      resolve(connection)
-    })
-  }
-
-  return new Promise((resolve, reject) => {
-    // Setup final timeout and rejection.
-    const finalTimeoutId = setTimeout(() => {
-      reject(`Connection from peer ${peer.id} to ${otherPeerId} timed out.`)
-      disposeConnections()
-      disposeTimeouts()
-    }, CONNECT_BASE_TIMEOUT_MS * Math.pow(2, CONNECT_RETRY_LIMIT))
-    timeoutSlotIds.push(finalTimeoutId)
-
-    // If peer errors out, stop connecting immediately.
-    const onPeerError = (err: Error) => {
-      const type = (err as any).type
+  return new Promise(async (resolve, reject) => {
+    // Listen for appropriate peer errors.
+    const onPeerError = (error: Error) => {
+      const type = (error as any).type
       const canContinue =
         type !== PeerErrorType.PeerUnavailable &&
         !FATAL_PEER_ERROR_TYPES.has(type)
 
       if (canContinue) return
 
-      reject(err)
       peer.off('error', onPeerError)
-      disposeConnections()
-      disposeTimeouts()
+      attemptedConnections.forEach(destroyConnection)
+      if (timeoutId) clearTimeout(timeoutId)
+      reject(error)
     }
     peer.on('error', onPeerError)
 
-    // If connections time out, retry with exponential backoff. Keep previous
-    // connections in case they eventually connect.
-    connect(resolve)
-    for (const interval of timeoutIntervals) {
-      const id = setTimeout(() => void connect(resolve), interval)
-      timeoutSlotIds.push(id)
+    // Begin attempting connections.
+    while (!connected && currentTry < CONNECT_TRY_LIMIT) {
+      if (peer.disconnected) reject('Peer is disconnected.')
+
+      currentTry++
+
+      const connection = peer.connect(otherPeerId, options) as
+        | DataConnection
+        | undefined
+
+      if (connection) {
+        attemptedConnections.push(connection)
+        presetupConnection?.(connection)
+
+        // On successful connection, clean up timeout and other connection
+        // attempts.
+        connection.once('open', () => {
+          connected = true
+          if (timeoutId) clearTimeout(timeoutId)
+          for (const otherConnection of attemptedConnections) {
+            if (otherConnection === connection) continue
+            destroyConnection(otherConnection)
+          }
+          peer.off('error', onPeerError)
+          resolve(connection)
+        })
+      }
+
+      const timeoutMs = CONNECT_BASE_TIMEOUT_MS * Math.pow(2, currentTry - 1)
+      const timeoutIdAndPromise = setTimeoutAsync(timeoutMs)
+      timeoutId = timeoutIdAndPromise.timeoutId
+
+      await timeoutIdAndPromise.promise
     }
+
+    attemptedConnections.forEach(destroyConnection)
+    peer.off('error', onPeerError)
+    reject(`Connection from peer ${peer.id} to ${otherPeerId} timed out.`)
   })
 }
 
@@ -173,7 +155,7 @@ export enum PeerErrorType {
 
 const CONNECT_BASE_TIMEOUT_MS = 1_000
 
-const CONNECT_RETRY_LIMIT = 5
+const CONNECT_TRY_LIMIT = 6
 
 const CREATE_PEER_TIMEOUT_MS = 2_000
 

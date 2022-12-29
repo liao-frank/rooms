@@ -1,6 +1,6 @@
 import { Dispatch, useEffect, useRef, useState } from 'react'
 
-import { Status } from '../member/member'
+import { ConnectionStatus } from '../member'
 import { Serializable } from '../types'
 import { useMember } from './useMember'
 
@@ -68,7 +68,7 @@ export function useRoom<T extends Serializable>(
     if (!member.isHost) return
 
     member.once('status', (status) => {
-      if (status !== Status.Connected) return
+      if (status !== ConnectionStatus.Connected) return
 
       member.broadcast({
         type: MessageType.SetState,
@@ -89,7 +89,7 @@ export function useRoom<T extends Serializable>(
   return {
     state,
     setState,
-    isHost: member.isHost && status === Status.Connected,
+    isHost: member.isHost && status === ConnectionStatus.Connected,
     status,
     dispatchAction: actions ? dispatchAction : undefined,
     error,
@@ -110,7 +110,7 @@ interface Room<T> {
   state: T
   setState: Dispatch<T>
   isHost: boolean
-  status: Status
+  status: ConnectionStatus
   dispatchAction?: DispatchAction
   error?: Error
 }

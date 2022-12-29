@@ -1,0 +1,43 @@
+import { Meta } from '@storybook/addon-docs'
+
+import { HostFlair } from './examples/HostFlair'
+
+<Meta
+  title="Basics/Host and participants"
+  parameters={{
+    viewMode: 'docs',
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+  }}
+/>
+
+# Host and participants
+
+Each room uses a single client as a source of truth, known as a host. _Rooms_ will automatically assign a client to be the host and shift the responsibility to another client if the current host leaves the room; clients cannot be manually assigned to be the host. All other clients are known as participants.
+
+Since a client can be either a host or participant at any given time, the `useRoom` hook returns an `isHost` value which can be useful in multiple ways.
+
+<br />
+
+### Example: Host flair
+
+<p>
+  <HostFlair />
+</p>
+
+You may want to show a visual indicator to the current user when they are currently hosting the room. The above example does exactly that by using the `isHost` value.
+
+Sample code:
+
+```tsx
+export const HostFlair = () => {
+  const { isHost, status } = useRoom<null>(ROOM_ID, null)
+
+  return (
+    <div>
+      You are a {isHost ? 'host' : 'participant'} of room {ROOM_ID}
+    </div>
+  )
+}
+```

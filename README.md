@@ -1,7 +1,7 @@
-![Logo](docs/rooms.png)
+\
+![Rooms logo](https://i.imgur.com/Ioau0V2.png)
 
-Rooms is a library for synchronizing state among multiple clients without
-servers using WebRTC.
+Rooms is a library for serverless synchronization of state across multiple clients using WebRTC.
 
 Rooms attempts to simplify the creation of multiplayer websites. Think in terms of chatrooms, party games, collaborative whiteboarding, etc.
 
@@ -14,7 +14,7 @@ Rooms attempts to simplify the creation of multiplayer websites. Think in terms 
 
 // 1. Within a component, call 'useRoom' with an ID specific to that piece of
 //    state.
-const { state, setState } = useRoom<number>('unique-id', 0)
+const { state, setState } = useRoom<number>('unique-id', /* Initial state: */ 0)
 
 // 2. Call 'setState' to change the state across all clients that are calling
 //    the hook with the same ID.
