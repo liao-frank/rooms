@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/addon-docs'
 
 import { LoadingTip } from './examples/LoadingTip'
+import { ExampleLink } from './lib/ExampleLink'
 
 <Meta
   title="Basics/Connection status"
@@ -18,11 +19,13 @@ The `useRoom` hook also returns a `status` value, which describes the connection
 
 ### Example: Loading tip
 
-This example implements a loading screen with a fun fact that is displayed while connecting to the example room.
-
 <p>
   <LoadingTip />
 </p>
+
+This example implements a loading screen with a fun fact that is displayed while connecting to the example room.
+
+Sample code:
 
 ```tsx
 export const LoadingTip = () => {
@@ -37,3 +40,7 @@ export const LoadingTip = () => {
   )
 }
 ```
+
+<p>
+  <ExampleLink example={LoadingTip} />
+</p>

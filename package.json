@@ -10,7 +10,8 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "build": "parcel build",
-    "build-storybook": "build-storybook",
+    "predeploy": "build-storybook",
+    "deploy": "gh-pages -d storybook-static",
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
@@ -40,6 +41,7 @@
     "@types/react-dom": "^18.0.8",
     "@types/uuid": "^8.3.4",
     "babel-loader": "^8.3.0",
+    "gh-pages": "^4.0.0",
     "parcel": "^2.7.0",
     "prettier": "^2.7.1",
     "process": "^0.11.10",
