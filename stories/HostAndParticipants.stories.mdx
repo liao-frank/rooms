@@ -17,7 +17,7 @@ import { ExampleLink } from './lib/ExampleLink'
 
 Each room uses a single client as a source of truth, known as a host. _Rooms_ will automatically assign a client to be the host and shift the responsibility to another client if the current host leaves the room; clients cannot be manually assigned to be the host. All other clients are known as participants.
 
-Since a client can be either a host or participant at any given time, the `useRoom` hook returns an `isHost` value which can be useful in multiple ways.
+Since a client can be either a host or participant at any given time, the `useRoomState` hook returns an `isHost` value which can be useful in multiple ways.
 
 <br />
 
@@ -33,7 +33,7 @@ Sample code:
 
 ```tsx
 export const HostFlair = () => {
-  const { isHost, status } = useRoom<null>(ROOM_ID, null)
+  const { isHost, status } = useRoomState<null>(ROOM_ID, null)
 
   return (
     <div>

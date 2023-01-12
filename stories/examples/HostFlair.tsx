@@ -1,9 +1,9 @@
-import { useRoom } from '@src/index'
-import { ConnectionStatus } from '@src/member'
+import { useRoomState } from '@src/index'
+import { Status } from '@src/room'
 import React, { CSSProperties, PropsWithChildren } from 'react'
 
 export const HostFlair = () => {
-  const { isHost, status } = useRoom<null>(ROOM_ID, null)
+  const { isHost, status } = useRoomState<null>(ROOM_ID, null)
 
   return (
     <div
@@ -13,7 +13,7 @@ export const HostFlair = () => {
         width: 'fit-content',
       }}
     >
-      {status === ConnectionStatus.Connected ? (
+      {status === Status.Connected ? (
         <>
           You are a {isHost ? <HostPill /> : <ParticipantPill />} of room{' '}
           {ROOM_ID}

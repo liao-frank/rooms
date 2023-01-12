@@ -1,10 +1,10 @@
-import { useRoom } from '@src/index'
-import { ConnectionStatus } from '@src/member'
+import { useRoomState } from '@src/index'
+import { Status } from '@src/room'
 import React, { useEffect, useState } from 'react'
 
 // Shows fun facts while connecting to the sample room.
 export const LoadingTip = () => {
-  const { status } = useRoom<null>(ROOM_ID, null)
+  const { status } = useRoomState<null>(ROOM_ID, null)
 
   // Even if the client connects to the room quickly, show the loading tip for
   // a minimum amount of time to avoid flashing.
@@ -19,8 +19,7 @@ export const LoadingTip = () => {
     return () => clearTimeout(slotId)
   }, [])
 
-  const showLoadingTip =
-    status !== ConnectionStatus.Connected || !minLoadingTimePassed
+  const showLoadingTip = status !== Status.Connected || !minLoadingTimePassed
 
   return (
     <>

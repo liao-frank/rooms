@@ -15,7 +15,7 @@ import { ExampleLink } from './lib/ExampleLink'
 
 # Connection status
 
-The `useRoom` hook also returns a `status` value, which describes the connection status of the room. The status can be one of three values: `connecting`, `connected`, and `disconnected`. This value can be used to implement loading screens or to otherwise tell users if they are connected to their room or not.
+The `useRoomState` hook also returns a `status` value, which describes the connection status of the room. The status can be one of three values: `connecting`, `connected`, and `disconnected`. This value can be used to implement loading screens or to otherwise tell users if they are connected to their room or not.
 
 ### Example: Loading tip
 
@@ -29,11 +29,11 @@ Sample code:
 
 ```tsx
 export const LoadingTip = () => {
-  const { status } = useRoom<null>(ROOM_ID, null)
+  const { status } = useRoomState<null>(ROOM_ID, null)
 
   return (
     <div>
-      {status !== ConnectionStatus.Connected
+      {status !== Status.Connected
         ? 'Fun fact: Pangolins are the only known mammals covered with scales\nConnecting... ⏳'
         : 'You are connected to room ' + ROOM_ID}
     </div>

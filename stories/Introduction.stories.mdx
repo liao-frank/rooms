@@ -30,15 +30,13 @@ import { Meta } from '@storybook/addon-docs'
 
 _Rooms_ is a React library for serverless synchronization of state across multiple clients using [WebRTC](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API). Rooms attempts to simplify the creation of multiplayer websites. Think in terms of chatrooms, party games, collaborative whiteboarding, etc.
 
-There is currently only one main export: the `useRoom` React hook. Please check out the rest of the documentation for examples. To test out the examples, you can open those pages in a new tab or window, or invite a friend to test with.
+There are currently only two main exports: the `Room` class and the `useRoomState` React hook. Please check out the rest of the documentation for examples. To test out the examples, you can open those pages in a new tab or window, or invite a friend to test with.
 
 <div className="subheading">FAQ</div>
 
 _**What is a "room"?**_
 
-At a high level, a room is a group of clients that are all connected to each other.
-
-Within the context of the _Rooms_ library, "room" is a metonymy for any single state object which is shared among many clients, hence the name of the `useRoom` hook.
+At a high level, a room is a group of clients that are all connected to each other through a host client. Any client can broadcast data to the other clients by sending the data through the host client.
 
 _**Is Rooms really serverless?**_
 

@@ -1,3 +1,5 @@
+import { useRoomState } from '@src/index'
+import { Status } from '@src/room'
 import React, {
   ChangeEventHandler,
   InputHTMLAttributes,
@@ -6,10 +8,8 @@ import React, {
   useState,
 } from 'react'
 
-import { useRoom } from '@src/index'
-
 export const SharedInput = () => {
-  const { state, setState } = useRoom<string>(
+  const { state, setState, status, isHost } = useRoomState<string>(
     '19328f4d-31ba-4df4-bdb3-6bf3c77ff172',
     ''
   )
@@ -23,6 +23,7 @@ export const SharedInput = () => {
       }}
     >
       <Input
+        disabled={status !== Status.Connected}
         onChange={(event) => void setState(event.target.value)}
         value={state}
       />

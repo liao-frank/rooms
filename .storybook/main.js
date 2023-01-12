@@ -24,6 +24,13 @@ module.exports = {
       ...config.resolve.alias,
       '@src': path.resolve(__dirname, '../src'),
     }
+
+    // Disable HMR because Storybook does double rendering on HMR which will
+    // ghost hosts that never give up the host role.
+    config.entry = config.entry.filter(
+      (singleEntry) => !singleEntry.includes('/webpack-hot-middleware/')
+    )
+
     return config
   },
 }
