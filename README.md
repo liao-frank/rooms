@@ -1,5 +1,13 @@
+
+
 \
 ![Rooms logo](https://i.imgur.com/Ioau0V2.png)
+
+# Project Status: Killed.
+
+Underlying libraries have made breaking changes to their peer servers + I discovered a similar project that provides serverless multiplayer state management @ https://joinplayroom.com/.
+
+----
 
 _Rooms_ is a library for serverless synchronization of state across multiple clients using [WebRTC](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API). Rooms attempts to simplify the creation of multiplayer websites. Think in terms of chatrooms, party games, collaborative whiteboarding, etc.
 
